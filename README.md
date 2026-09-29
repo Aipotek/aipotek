@@ -20,4 +20,4 @@ The fingerprint (SHA-256) of the working version as of today
 
 `e2a1c30b1d94c34dd71086eeb8bec765f789fcda54ab288a3194b1b8046eb30f`
 
-Contact: [email]
+Contact: scott@aipotek.com
