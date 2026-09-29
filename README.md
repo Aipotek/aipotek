@@ -1,6 +1,6 @@
 # Aipotek: a playable instrument for a language model's inner workings
 
-*[DATE: the day this goes live]*
+<p class="when">September 28, 2026</p>
 
 Aipotek is an instrument for steering an open-weight language model's
 internal state live, while it writes, from an ordinary MIDI controller. Knobs
