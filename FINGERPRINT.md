@@ -1,6 +1,6 @@
 # Fingerprint of the working version
 
-On September 28,the working version of Aipotek was the
+On September 28, 2026 the working version of Aipotek was the
 file `AIPOTEK_v89_TXT.txt` (build `2026-09-25-h`). Its SHA-256 fingerprint:
 
 ```
