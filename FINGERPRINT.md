@@ -1,6 +1,6 @@
 # Fingerprint of the working version
 
-On *[DATE: the day this goes live]*, the working version of Aipotek was the
+On <p class="when">September 28, 2026</p>, the working version of Aipotek was the
 file `AIPOTEK_v89_TXT.txt` (build `2026-09-25-h`). Its SHA-256 fingerprint:
 
 ```
