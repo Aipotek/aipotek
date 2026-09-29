@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Aipotek</title>
+<meta name="description" content="A playable instrument for a language model's inner workings. Full release late October 2026.">
+<style>
+  :root{
+    --bg:#0e0e10; --met0:#4a4b55; --met1:#34353c; --met2:#24252a; --met3:#1a1b1f;
+    --groove:#08080a; --ink:#e6e4df; --dim:#9a968f; --amber:#c98326; --lit:#ffb03a;
+    --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;background:var(--bg);color:var(--ink)}
+  body{font-family:var(--mono);font-size:15px;line-height:1.7;
+       display:flex;justify-content:center;padding:clamp(16px,6vw,72px) 16px}
+  .plate{width:100%;max-width:640px;
+         background:linear-gradient(180deg,var(--met1),var(--met2) 40%,var(--met3));
+         border:1px solid var(--met0);border-radius:4px;
+         box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 20px 50px rgba(0,0,0,.5);
+         padding:clamp(24px,5vw,48px)}
+  h1{margin:0;font-size:clamp(34px,7vw,52px);font-weight:700;letter-spacing:.14em;
+     color:var(--ink);text-shadow:0 -1px 0 var(--groove)}
+  .sub{margin:.2em 0 2em;color:var(--amber)}
+  p{margin:0 0 1.1em;max-width:62ch}
+  .when{color:var(--dim);margin-bottom:2em}
+  .release{border-left:2px solid var(--amber);padding-left:14px}
+  .serial{margin-top:2.2em;background:var(--groove);border:1px solid var(--met1);
+          border-radius:3px;padding:14px 16px}
+  .serial .k{color:var(--dim);font-size:13px;margin-bottom:6px}
+  .serial code{display:block;color:var(--lit);font-size:13px;word-break:break-all;
+               letter-spacing:.04em}
+  .contact{margin-top:2em;color:var(--dim);font-size:14px}
+  a{color:var(--lit);text-underline-offset:3px}
+  a:focus-visible{outline:2px solid var(--lit);outline-offset:3px}
+</style>
+</head>
+<body>
+<main class="plate">
+  <h1>Aipotek</h1>
+  <p class="sub">A playable instrument for a language model's inner workings</p>
+  <p class="when">[DATE: the day this goes live]</p>
+
+  <p>Aipotek is an instrument for steering an open-weight language model's
+  internal state live, while it writes, from an ordinary MIDI controller.
+  Knobs and faders push the model's internal state along chosen directions
+  word by word, and the instrument makes its own sound from measured
+  quantities: how uncertain the model is, how surprised, and how hard the
+  push is landing.</p>
+
+  <p>Every performance is recorded exactly, can be replayed word for word,
+  and can be rewound to any word to change one knob and hear what would have
+  happened instead. Every test runs against an untouched model and a
+  meaningless decoy push, and predictions are written down before runs.</p>
+
+  <p class="release">The full release, with the open-source chassis
+  (MPL-2.0), modules that can be chained, and a demo, is coming in late
+  October 2026.</p>
+
+  <div class="serial">
+    <div class="k">Fingerprint (SHA-256) of the working version as of today, AIPOTEK_v89_TXT.txt</div>
+    <code>e2a1c30b1d94c34dd71086eeb8bec765f789fcda54ab288a3194b1b8046eb30f</code>
+  </div>
+
+  <p class="contact">Contact: [email]<br>Code and updates:
+  <a href="https://github.com/aipoteknology/aipotek">github.com/aipoteknology/aipotek</a></p>
+</main>
+</body>
+</html>
