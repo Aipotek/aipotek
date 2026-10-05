@@ -1,70 +1,188 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Aipotek</title>
-<meta name="description" content="A playable instrument for a language model's inner workings. Full release late October 2026.">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Aipotek: play a large language model</title>
+<meta name="description" content="Aipotek is an instrument for steering language models with knobs and faders. A MIDI controller plays the model's activations live.">
+<meta property="og:title" content="Aipotek: play a large language model">
+<meta property="og:description" content="An instrument for steering language models with knobs, faders and MIDI.">
+<meta property="og:image" content="https://img.youtube.com/vi/k1n4Uv0Ztuk/maxresdefault.jpg">
+<meta name="theme-color" content="#16191f">
+<link rel="icon" href="favicon.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --bg:#0e0e10; --met0:#4a4b55; --met1:#34353c; --met2:#24252a; --met3:#1a1b1f;
-    --groove:#08080a; --ink:#e6e4df; --dim:#9a968f; --amber:#c98326; --lit:#ffb03a;
-    --mono:"SFMono-Regular",Consolas,"Liberation Mono",Menlo,monospace;
+  :root {
+    --panel: #16191f;        /* graphite front panel */
+    --panel-edge: #262b34;   /* module frame */
+    --ink: #e8eef7;
+    --ink-muted: #96a1b2;
+    --wave-a: #2f6bff;       /* logo gradient start */
+    --wave-b: #36c8ff;       /* logo gradient end */
+    --arc: #f2a24b;          /* the knob arcs on the instrument */
+    --measure: 36rem;
+    color-scheme: dark;
   }
-  *{box-sizing:border-box}
-  html,body{margin:0;background:var(--bg);color:var(--ink)}
-  body{font-family:var(--mono);font-size:15px;line-height:1.7;
-       display:flex;justify-content:center;padding:clamp(16px,6vw,72px) 16px}
-  .plate{width:100%;max-width:640px;
-         background:linear-gradient(180deg,var(--met1),var(--met2) 40%,var(--met3));
-         border:1px solid var(--met0);border-radius:4px;
-         box-shadow:inset 0 1px 0 rgba(255,255,255,.06),0 20px 50px rgba(0,0,0,.5);
-         padding:clamp(24px,5vw,48px)}
-  h1{margin:0;font-size:clamp(34px,7vw,52px);font-weight:700;letter-spacing:.14em;
-     color:var(--ink);text-shadow:0 -1px 0 var(--groove)}
-  .sub{margin:.2em 0 2em;color:var(--amber)}
-  p{margin:0 0 1.1em;max-width:62ch}
-  .when{color:var(--dim);margin-bottom:2em}
-  .release{border-left:2px solid var(--amber);padding-left:14px}
-  .serial{margin-top:2.2em;background:var(--groove);border:1px solid var(--met1);
-          border-radius:3px;padding:14px 16px}
-  .serial .k{color:var(--dim);font-size:13px;margin-bottom:6px}
-  .serial code{display:block;color:var(--lit);font-size:13px;word-break:break-all;
-               letter-spacing:.04em}
-  .contact{margin-top:2em;color:var(--dim);font-size:14px}
-  a{color:var(--lit);text-underline-offset:3px}
-  a:focus-visible{outline:2px solid var(--lit);outline-offset:3px}
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background:
+      radial-gradient(120% 80% at 50% -10%, #1d222a 0%, var(--panel) 60%) fixed,
+      var(--panel);
+    color: var(--ink);
+    font-family: "Space Grotesk", "Helvetica Neue", Arial, sans-serif;
+    font-size: 1.0625rem;
+    line-height: 1.55;
+    padding: env(safe-area-inset-top, 0px) 1.25rem env(safe-area-inset-bottom, 0px);
+  }
+  main { max-width: 60rem; margin: 0 auto; padding: 3.5rem 0 3rem; text-align: center; }
+
+  /* the drifting oscilloscope wave, the one moving thing on the page */
+  .scope { display: block; width: min(22rem, 70vw); height: auto; margin: 0 auto; overflow: visible; }
+  .scope .axis { stroke: url(#axis); stroke-width: 2; opacity: .55; }
+  .scope .trace { fill: none; stroke: url(#trace); stroke-width: 6; stroke-linecap: round; stroke-linejoin: round; }
+  .scope .dot-a { fill: var(--wave-a); } .scope .dot-b { fill: var(--wave-b); }
+  .wordmark { font-weight: 600; font-size: 1.6rem; letter-spacing: .01em; margin: .35rem 0 0; }
+
+  h1 {
+    font-weight: 500; font-size: clamp(2.1rem, 5.4vw, 3.6rem); line-height: 1.08;
+    letter-spacing: -.02em; margin: 2.4rem auto 1rem; max-width: 13ch; text-wrap: balance;
+  }
+  .lede { color: var(--ink-muted); max-width: var(--measure); margin: 0 auto 2.5rem; }
+
+  /* the video, framed like a rack module */
+  .module {
+    position: relative; margin: 0 auto; max-width: 56rem; padding: .9rem;
+    background: #1b1f26; border: 1px solid var(--panel-edge); border-radius: 10px;
+    box-shadow: 0 1px 0 rgba(255,255,255,.04) inset, 0 24px 60px -30px rgba(0,0,0,.8);
+  }
+  .module::before, .module::after {          /* rack screws */
+    content: ""; position: absolute; top: .35rem; width: .45rem; height: .45rem; border-radius: 50%;
+    background: radial-gradient(circle at 35% 35%, #4a515d, #23272f);
+  }
+  .module::before { left: .35rem; } .module::after { right: .35rem; }
+  .frame { position: relative; aspect-ratio: 16 / 9; border-radius: 4px; overflow: hidden; background: #0d0f13; }
+  .frame iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+  .caption { color: var(--ink-muted); font-size: .95rem; max-width: var(--measure); margin: 1.1rem auto 0; }
+
+  .links { margin: 2.2rem 0 0; }
+  .links a {
+    color: var(--ink); text-decoration: none; font-weight: 500;
+    border-bottom: 2px solid var(--arc); padding-bottom: .1rem;
+  }
+  .links a:hover { color: var(--arc); }
+  a:focus-visible { outline: 2px solid var(--wave-b); outline-offset: 4px; border-radius: 2px; }
+
+  footer { color: var(--ink-muted); font-size: .9rem; text-align: center; padding: 2rem 0 3rem; }
+
+  @media (max-width: 520px) {
+    main { padding-top: 2.5rem; }
+    .module { padding: .55rem; }
+  }
+
+  .announcement { max-width: var(--measure); margin: 4.5rem auto 0; text-align: left; border-top: 1px solid var(--panel-edge); padding-top: 2.5rem; }
+  .announcement h2 { font-weight: 500; font-size: 1.35rem; margin: 0 0 .25rem; letter-spacing: -.01em; }
+  .announcement .when { color: var(--ink-muted); margin: 0 0 1.4rem; font-size: .95rem; }
+  .announcement p { margin: 0 0 1.1rem; }
+  .announcement .release { color: var(--ink); border-left: 3px solid var(--arc); padding-left: .9rem; }
+  .serial { margin: 1.6rem 0; padding: 1rem 1.1rem; background: #1b1f26; border: 1px solid var(--panel-edge); border-radius: 8px; }
+  .serial .k { color: var(--ink-muted); font-size: .9rem; margin-bottom: .45rem; }
+  .serial code { display: block; font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace; font-size: .86rem; color: var(--ink); overflow-wrap: anywhere; }
+  .announcement .contact a { color: var(--ink); text-decoration: none; border-bottom: 2px solid var(--arc); }
+  .announcement .contact a:hover { color: var(--arc); }
 </style>
 </head>
 <body>
-<main class="plate">
-  <h1>Aipotek</h1>
-  <p class="sub">A playable instrument for a language model's inner workings</p>
- <p class="when">September 28, 2026</p>
+<main>
+  <svg class="scope" viewBox="0 0 440 130" role="img" aria-label="Aipotek logo: a sine wave">
+    <defs>
+      <linearGradient id="trace" x1="0" y1="0" x2="1" y2="0">
+        <stop offset="0" stop-color="#2f6bff"/><stop offset="1" stop-color="#36c8ff"/>
+      </linearGradient>
+      <linearGradient id="axis" x1="20" y1="0" x2="420" y2="0" gradientUnits="userSpaceOnUse">
+        <stop offset="0" stop-color="#2f6bff"/><stop offset="1" stop-color="#36c8ff"/>
+      </linearGradient>
+    </defs>
+    <line class="axis" x1="20" y1="65" x2="420" y2="65"/>
+    <path class="trace" id="trace-path" d=""/>
+    <circle class="dot-a" cx="20" cy="65" r="8"/>
+    <circle class="dot-b" cx="420" cy="65" r="8"/>
+  </svg>
+  <p class="wordmark">Aipotek</p>
 
-  <p>Aipotek is an instrument for steering an open-weight language model's
-  internal state live, while it writes, from an ordinary MIDI controller.
-  Knobs and faders push the model's internal state along chosen directions
-  word by word, and the instrument makes its own sound from measured
-  quantities: how uncertain the model is, how surprised, and how hard the
-  push is landing.</p>
+  <h1>Play a large language model.</h1>
+  <p class="lede">Aipotek is an instrument for steering language models with knobs and faders.
+    Each dial pushes a direction inside the model's activations. A MIDI controller plays them live,
+    and the machine makes its own sounds as it runs.</p>
 
-  <p>Every performance is recorded exactly, can be replayed and rewound 
-  to any word to change one knob and hear what would have
-  happened instead. Every test runs against an untouched model and a
-  decoy push built to mean nothing, and predictions are written down before runs.</p>
-
-  <p class="release">The full release, with the open-source chassis
-  (MPL-2.0), modules that can be chained, and a demo, is coming in late
-  October 2026.</p>
-
-  <div class="serial">
-    <div class="k">Fingerprint (SHA-256) of the working version as of today, AIPOTEK_v89_TXT.txt</div>
-    <code>e2a1c30b1d94c34dd71086eeb8bec765f789fcda54ab288a3194b1b8046eb30f</code>
+  <div class="module">
+    <div class="frame">
+      <iframe src="https://www.youtube-nocookie.com/embed/k1n4Uv0Ztuk?rel=0"
+        title="Aipotek: playing a large language model with a MIDI controller"
+        loading="lazy"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+        referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe>
+    </div>
   </div>
+  <p class="caption">Qwen2.5-7B-Instruct explains why an office printer seems to have feelings, while a
+    "ghosts" feature is turned up. Everything on screen is real output, and all the sound is the instrument's own.</p>
 
-  <p class="contact">Contact: scott@aipotek.com <br>Code and updates:
-<a href="https://github.com/aipotek/aipotek">github.com/aipotek/aipotek</a></p>
+  <p class="links"><a href="https://youtu.be/k1n4Uv0Ztuk">Watch on YouTube</a></p>
+
+  <section class="announcement" aria-labelledby="ann-title">
+    <h2 id="ann-title">A playable instrument for a language model's inner workings</h2>
+    <p class="when">September 28, 2026</p>
+    <p>Aipotek is an instrument for steering an open-weight language model's
+    internal state live, while it writes, from an ordinary MIDI controller.
+    Knobs and faders push the model's internal state along chosen directions
+    word by word, and the instrument makes its own sound from measured
+    quantities: how uncertain the model is, how surprised, and how hard the
+    push is landing.</p>
+    <p>Every performance is recorded exactly, can be replayed and rewound
+    to any word to change one knob and hear what would have
+    happened instead. Every test runs against an untouched model and a
+    decoy push built to mean nothing, and predictions are written down before runs.</p>
+    <p class="release">The full release, with the open-source chassis
+    (MPL-2.0), modules that can be chained, and a demo, is coming in late
+    October 2026.</p>
+    <div class="serial">
+      <div class="k">Fingerprint (SHA-256) of the working version as of today, AIPOTEK_v89_TXT.txt</div>
+      <code>e2a1c30b1d94c34dd71086eeb8bec765f789fcda54ab288a3194b1b8046eb30f</code>
+    </div>
+    <p class="contact">Contact: scott@aipotek.com <br>Code and updates:
+    <a href="https://github.com/aipotek/aipotek">github.com/aipotek/aipotek</a></p>
+  </section>
 </main>
+<footer>Professionally copy/pasted by Scott, with Claude writing the code.</footer>
+
+<script>
+  // The drifting trace: one and a half cycles between the two end dots, phase slowly moving.
+  (function () {
+    var path = document.getElementById("trace-path");
+    var x0 = 20, x1 = 420, yc = 65, amp = 44, cycles = 1.5, n = 120;
+    function draw(phase) {
+      var d = "";
+      for (var i = 0; i <= n; i++) {
+        var u = i / n, x = x0 + (x1 - x0) * u;
+        var env = Math.pow(Math.sin(Math.PI * u), 0.3);        // full shape, pinned to the axis only at the dots
+        var y = yc - amp * env * Math.sin(2 * Math.PI * cycles * u + phase);
+        d += (i ? " L" : "M") + x.toFixed(1) + "," + y.toFixed(1);
+      }
+      path.setAttribute("d", d);
+    }
+    var still = window.matchMedia && window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    if (still) { draw(0); return; }
+    var start = null;
+    function tick(t) {
+      if (start === null) start = t;
+      draw(((t - start) / 1000) * 0.9);                        // about one drift every 7 seconds
+      requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  })();
+</script>
 </body>
 </html>
