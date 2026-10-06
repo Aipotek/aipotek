@@ -1,5 +1,9 @@
 # Aipotek: a playable instrument for a language model's inner workings
 
+[![Aipotek: playing a large language model with a MIDI controller](aipotek_demo.jpg)](https://youtu.be/k1n4Uv0Ztuk)
+
+▶ [Watch the 30-second demo on YouTube](https://youtu.be/k1n4Uv0Ztuk) · [aipotek.com](https://aipotek.com)
+
 <p class="when">September 28, 2026</p>
 
 Aipotek is an instrument for steering an open-weight language model's
